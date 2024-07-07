@@ -46,8 +46,8 @@ public class Livro {
         return StatusLivro.DISPONIVEL.equals(this.status);
     }
 
-    public boolean emprestado() {
-        return StatusLivro.EMPRESTADO.equals(this.status);
+    public boolean indisponivel() {
+        return StatusLivro.INDISPONIVEL.equals(this.status);
     }
 
     public Livro(String titulo, Barcode numeroInventario, String isbn, Autor autor) {
@@ -58,11 +58,11 @@ public class Livro {
         this.status = StatusLivro.DISPONIVEL;
     }
 
-    public Livro marqueEmprestado() {
-        if (emprestado()) {
-            throw new IllegalStateException("O livro já está emprestado.");
+    public Livro marqueIndisponivel() {
+        if (indisponivel()) {
+            throw new IllegalStateException("O livro já está indisponivel.");
         }
-        this.status = StatusLivro.EMPRESTADO;
+        this.status = StatusLivro.INDISPONIVEL;
         return this;
     }
 
@@ -70,7 +70,7 @@ public class Livro {
         if (disponivel()) {
             throw new IllegalStateException("O livro já está disponível.");
         }
-        this.status = StatusLivro.EMPRESTADO;
+        this.status = StatusLivro.DISPONIVEL;
         return this;
     }
 
@@ -81,6 +81,6 @@ public class Livro {
     }
 
     public enum StatusLivro {
-        DISPONIVEL, EMPRESTADO
+        DISPONIVEL, INDISPONIVEL
     }
 }

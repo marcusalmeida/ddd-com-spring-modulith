@@ -33,23 +33,23 @@ public class GerenciadorLivros {
         Livro livro = repositorio.findById(idLivro)
                 .orElseThrow(() -> new IllegalArgumentException("Livro nao encontrado"));
 
-        if (livro.emprestado()) {
-            throw new IllegalStateException("Livro emprestado atualmente.");
+        if (livro.indisponivel()) {
+            throw new IllegalStateException("Livro indisponível atualmente.");
         }
         repositorio.delete(livro);
     }
 
-    public void emprestar(String barcode) {
+    public void indisponibilizar(String barcode) {
         var numeroInventario = new Livro.Barcode(barcode);
 
         Livro livro = repositorio.findByNumeroInventario(numeroInventario)
-                .map(Livro::marqueEmprestado)
+                .map(Livro::marqueIndisponivel)
                 .orElseThrow(() -> new IllegalArgumentException("Livro não encontrado."));
 
         repositorio.save(livro);
     }
 
-    public void devolver(String barcode) {
+    public void disponibilizar(String barcode) {
         var numeroInventario = new Livro.Barcode(barcode);
 
         Livro livro = repositorio.findByNumeroInventario(numeroInventario)
@@ -66,8 +66,8 @@ public class GerenciadorLivros {
     }
 
     @Transactional(readOnly = true)
-    public List<LivroDto> livrosEmprestados() {
-        return repositorio.findByStatus(Livro.StatusLivro.EMPRESTADO)
+    public List<LivroDto> livrosIndisponiveis() {
+        return repositorio.findByStatus(Livro.StatusLivro.INDISPONIVEL)
                 .stream()
                 .map(mapper::toDto)
                 .toList();

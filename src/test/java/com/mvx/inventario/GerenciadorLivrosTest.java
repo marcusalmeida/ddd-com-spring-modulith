@@ -16,8 +16,8 @@ class GerenciadorLivrosTest {
 
     @Test
     void deveriaListarLivrosEmprestados() {
-        var livros = gerenciadorLivros.livrosEmprestados();
+        var livros = gerenciadorLivros.livrosIndisponiveis();
         assertThat(livros).hasSize(1);
-        assertThat(livros.get(0).status()).isEqualTo(Livro.StatusLivro.EMPRESTADO);
+        assertThat(livros.get(0).status()).isEqualTo(Livro.StatusLivro.INDISPONIVEL);
     }
 }

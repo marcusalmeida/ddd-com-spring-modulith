@@ -10,24 +10,23 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-
-
 @RestController
 public class LivroController {
-    
+
     private final GerenciadorLivros gerenciador;
 
-    public LivroController(GerenciadorLivros gerenciador){
+    public LivroController(GerenciadorLivros gerenciador) {
         this.gerenciador = gerenciador;
     }
 
     @PostMapping("/livros")
     public ResponseEntity<LivroDto> adicionarLivro(@RequestBody AdicionarLivroRequest request) {
-        var livroDto = gerenciador.adicionarAoInventario(request.titulo(), new Livro.Barcode(request.numeroInventario()),request.isbn(), request.autor());
-        
+        var livroDto = gerenciador.adicionarAoInventario(request.titulo(),
+                new Livro.Barcode(request.numeroInventario()), request.isbn(), request.autor());
+
         return ResponseEntity.ok(livroDto);
     }
-    
+
     @DeleteMapping("/livros/{id}")
     ResponseEntity<Void> removerLivroDoInventario(@PathVariable("id") Long id) {
         gerenciador.removerDoInventario(id);
@@ -39,12 +38,11 @@ public class LivroController {
         return gerenciador.localizar(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @GetMapping("/livros")
-    public ResponseEntity<List<LivroDto>> visualizarLivrosEmprestados() {
-        return ResponseEntity.ok(gerenciador.livrosEmprestados());
+    @GetMapping("/livros-indisponiveis")
+    public ResponseEntity<List<LivroDto>> visualizarLivrosIndisponiveis() {
+        return ResponseEntity.ok(gerenciador.livrosIndisponiveis());
     }
-    
-    
 
-    record AdicionarLivroRequest(String titulo, String numeroInventario, String isbn, String autor){}
+    record AdicionarLivroRequest(String titulo, String numeroInventario, String isbn, String autor) {
+    }
 }
