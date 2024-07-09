@@ -1,7 +1,7 @@
-package com.mvx.inventario;
+package com.mvx.biblioteca.livro.domain;
 
-import jakarta.persistence.AttributeOverride;
-import jakarta.persistence.Column;
+import org.jmolecules.ddd.annotation.ValueObject;
+
 import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Getter
 @NoArgsConstructor
-@Table(name = "livros", uniqueConstraints = @UniqueConstraint(columnNames = { "barcode" }))
+@Table(name = "livros_emprestimo", uniqueConstraints = @UniqueConstraint(columnNames = { "barcode" }))
 public class Livro {
 
     @Id
@@ -32,10 +32,6 @@ public class Livro {
 
     private String isbn;
 
-    @Embedded
-    @AttributeOverride(name = "nome", column = @Column(name = "autor"))
-    private Autor autor;
-
     @Enumerated(EnumType.STRING)
     private StatusLivro status;
 
@@ -46,15 +42,18 @@ public class Livro {
         return StatusLivro.DISPONIVEL.equals(this.status);
     }
 
+    public boolean reservado(){
+        return StatusLivro.RESERVADO.equals(this.status);
+    }
+
     public boolean indisponivel() {
         return StatusLivro.INDISPONIVEL.equals(this.status);
     }
 
-    public Livro(String titulo, Barcode numeroInventario, String isbn, Autor autor) {
+    public Livro(String titulo, Barcode numeroInventario, String isbn) {
         this.titulo = titulo;
         this.numeroInventario = numeroInventario;
         this.isbn = isbn;
-        this.autor = autor;
         this.status = StatusLivro.DISPONIVEL;
     }
 
@@ -66,6 +65,16 @@ public class Livro {
         return this;
     }
 
+
+    public Livro marqueReservado() {
+        if (reservado()) {
+            throw new IllegalStateException("O livro já está disponivel.");
+        }
+        this.status = StatusLivro.RESERVADO;
+        return this;
+    }
+
+
     public Livro marqueDisponivel() {
         if (disponivel()) {
             throw new IllegalStateException("O livro já está disponível.");
@@ -74,13 +83,11 @@ public class Livro {
         return this;
     }
 
+    @ValueObject
     public record Barcode(String barcode) {
     }
 
-    public record Autor(String nome) {
-    }
-
     public enum StatusLivro {
-        DISPONIVEL, INDISPONIVEL
+        DISPONIVEL, INDISPONIVEL, RESERVADO
     }
 }
